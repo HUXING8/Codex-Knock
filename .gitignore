@@ -1,0 +1,9 @@
+node_modules/
+coverage/
+.DS_Store
+
+# Local runtime state. The tool writes user config/state under ~/.codex-knock
+# by default, but keep repo-local overrides out of source control too.
+.codex-knock/
+config.json
+state.json

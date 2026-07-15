@@ -1,0 +1,40 @@
+{
+  "name": "codex-knock",
+  "version": "1.1.0",
+  "description": "Lightweight Codex CLI notifier for ServerChan, WeCom, Feishu, DingTalk, Bark, and webhooks.",
+  "type": "module",
+  "main": "src/cli.js",
+  "bin": {
+    "codex-knock": "bin/codex-knock.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "codex",
+    "openai-codex",
+    "serverchan",
+    "wecom",
+    "feishu",
+    "dingtalk",
+    "bark",
+    "webhook",
+    "notifications",
+    "cli"
+  ],
+  "author": "Codex Knock contributors",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.21.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "start": "node bin/codex-knock.js"
+  }
+}
