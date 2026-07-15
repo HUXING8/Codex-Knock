@@ -7,11 +7,6 @@ export const DEFAULT_CONFIG = Object.freeze({
   port: 45678,
   codexPath: "codex",
   serverChanSendKey: "",
-  wecomWebhookUrl: "",
-  feishuWebhookUrl: "",
-  dingtalkWebhookUrl: "",
-  barkUrl: "",
-  webhookUrl: "",
   notify: {
     completed: true,
     failed: true,

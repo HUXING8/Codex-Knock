@@ -7,11 +7,6 @@ import {
   shouldNotify,
 } from "../src/notifiers/serverchan.js";
 import { formatThousands } from "../src/message.js";
-import { dispatchNotifications } from "../src/notifiers/index.js";
-import { buildWecomPayload } from "../src/notifiers/wecom.js";
-import { buildFeishuPayload } from "../src/notifiers/feishu.js";
-import { buildDingtalkPayload } from "../src/notifiers/dingtalk.js";
-import { buildBarkUrl } from "../src/notifiers/bark.js";
 
 const sampleNotification = {
   type: "completed",
@@ -79,43 +74,7 @@ test("builds ServerChan Turbo URL", () => {
   assert.equal(buildServerChanUrl("SCT123"), "https://sctapi.ftqq.com/SCT123.send");
 });
 
-test("builds enterprise chat payloads", () => {
-  assert.match(buildWecomPayload(sampleNotification).markdown.content, /Codex 已完成/);
-  assert.match(buildFeishuPayload(sampleNotification).content.text, /Fix payment tests/);
-  assert.match(buildDingtalkPayload(sampleNotification).markdown.title, /Codex 已完成/);
-  assert.equal(buildBarkUrl("https://api.day.app/KEY"), "https://api.day.app/KEY/push");
-});
 
-test("dispatchNotifications fans out to configured channels", async () => {
-  const calls = [];
-  const fetchImpl = async (url, init) => {
-    calls.push({ url, init });
-    return {
-      ok: true,
-      status: 200,
-      async json() {
-        return { errcode: 0, code: 0, StatusCode: 0 };
-      },
-    };
-  };
-
-  const result = await dispatchNotifications(
-    {
-      serverChanSendKey: "SCT123",
-      wecomWebhookUrl: "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=abc",
-      feishuWebhookUrl: "https://open.feishu.cn/open-apis/bot/v2/hook/abc",
-      dingtalkWebhookUrl: "https://oapi.dingtalk.com/robot/send?access_token=abc",
-      barkUrl: "https://api.day.app/KEY",
-      webhookUrl: "https://example.com/hook",
-      notify: { completed: true, failed: true, interrupted: true, errors: true },
-    },
-    sampleNotification,
-    { fetchImpl },
-  );
-
-  assert.equal(calls.length, 6);
-  assert.equal(result.results.filter((item) => !item.skipped && !item.error).length, 6);
-});
 
 test("formats token counts with thousand separators", () => {
   assert.equal(formatThousands(12), "12");

@@ -6,7 +6,6 @@ import { runCodex } from "./codex-runner.js";
 import { formatStatus } from "./status.js";
 import { configPath, statePath } from "./paths.js";
 import { findRealCodexPath, installCodexShim, shimCodexPath } from "./installer.js";
-import { configuredChannels } from "./notifiers/index.js";
 
 export async function main(argv) {
   const [command, ...args] = argv;
@@ -67,21 +66,6 @@ function setup(args) {
     if (arg === "--serverchan-sendkey") {
       patch.serverChanSendKey = requiredValue(arg, next);
       index += 1;
-    } else if (arg === "--wecom-webhook") {
-      patch.wecomWebhookUrl = requiredValue(arg, next);
-      index += 1;
-    } else if (arg === "--feishu-webhook") {
-      patch.feishuWebhookUrl = requiredValue(arg, next);
-      index += 1;
-    } else if (arg === "--dingtalk-webhook") {
-      patch.dingtalkWebhookUrl = requiredValue(arg, next);
-      index += 1;
-    } else if (arg === "--bark-url") {
-      patch.barkUrl = requiredValue(arg, next);
-      index += 1;
-    } else if (arg === "--webhook-url") {
-      patch.webhookUrl = requiredValue(arg, next);
-      index += 1;
     } else if (arg === "--port") {
       patch.port = Number.parseInt(requiredValue(arg, next), 10);
       index += 1;
@@ -102,12 +86,11 @@ function setup(args) {
 
   const config = updateConfig(patch);
   const install = installCodexShim();
-  const channels = configuredChannels(config);
 
   console.log(`Config written to ${configPath()}`);
   console.log(`Proxy: ws://${config.host}:${config.port}`);
   console.log(`Codex executable: ${config.codexPath}`);
-  console.log(`Channels: ${channels.length ? channels.join(", ") : "none configured"}`);
+  console.log(`ServerChan: ${config.serverChanSendKey ? "configured" : "not configured"}`);
   console.log(`Codex shim: ${install.shimPath}`);
   if (install.profile) {
     console.log(`Shell profile: ${install.profile}${install.profileUpdated ? " updated" : " already configured"}`);
@@ -126,24 +109,14 @@ function printHelp() {
   console.log(`codex-knock
 
 Usage:
-  codex-knock setup [channel options] [--port PORT] [--host HOST] [--codex-path PATH]
+  codex-knock setup --serverchan-sendkey SENDKEY [--port PORT] [--host HOST] [--codex-path PATH]
   codex-knock proxy
   codex-knock status
   codex-knock codex [codex args...]
   codex-knock shim [codex args...]
 
-Channel options:
-  --serverchan-sendkey SENDKEY
-  --wecom-webhook URL
-  --feishu-webhook URL
-  --dingtalk-webhook URL
-  --bark-url URL
-  --webhook-url URL
-
 Examples:
   codex-knock setup --serverchan-sendkey SCT...
-  codex-knock setup --wecom-webhook "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=..."
-  codex-knock setup --feishu-webhook "https://open.feishu.cn/open-apis/bot/v2/hook/..."
   codex
   codex resume --last
 `);
